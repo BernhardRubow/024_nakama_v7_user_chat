@@ -9,9 +9,12 @@ EditorBuildSettings:
     path: Assets/_nvp/scenes/_root.unity
     guid: 3bca6eadbbebf384f814a057f95695f6
   - enabled: 1
-    path: Assets/_nvp/scenes/menu/mainMenu.unity
+    path: Assets/_nvp/scenes/menu/menuMain.unity
     guid: ea9a41e4be4abc94d9f3aea83a1e3476
   - enabled: 1
-    path: Assets/_nvp/scenes/menu/util_ConnectToServer.unity
+    path: Assets/_nvp/scenes/menu/menuSettings.unity
     guid: b3b1f21a843a59d4b8a6c93d79bb4407
+  - enabled: 1
+    path: Assets/_nvp/scenes/chat/ChatWithDeviceId.unity
+    guid: a7543efa2fc08a9409f246fb7fff925d
   m_configObjects: {}

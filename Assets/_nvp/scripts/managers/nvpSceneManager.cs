@@ -26,7 +26,15 @@ public class nvpSceneManager : MonoBehaviour {
 		this.UnsubscribeFromEvents();
 	}
 
+	void OnStartChatWithDeviceIdRequested(object s, object e){
+		SceneManager.UnloadSceneAsync("menuMain");
+		SceneManager.LoadScene("ChatWithDeviceId", LoadSceneMode.Additive);
+	}
 
+	void OnSaveSettingRequested(object s, object e){
+		SceneManager.UnloadSceneAsync("menuSettings");
+		SceneManager.LoadScene("menuMain", LoadSceneMode.Additive);
+	}
 
 	void OnOpenSettingsMenuRequested(object s, object e){
 		SceneManager.UnloadSceneAsync("menuMain");
@@ -48,10 +56,14 @@ public class nvpSceneManager : MonoBehaviour {
 	void SubscribeToEvents(){
 		nvpEventManager.INSTANCE.SubscribeToEvent(GameEvents.OnGameInitialized, OnGameInitialized);
 		nvpEventManager.INSTANCE.SubscribeToEvent(GameEvents.OnOpenSettingsMenuRequested, OnOpenSettingsMenuRequested);
+		nvpEventManager.INSTANCE.SubscribeToEvent(GameEvents.OnSaveSettingRequested, OnSaveSettingRequested);
+		nvpEventManager.INSTANCE.SubscribeToEvent(GameEvents.OnStartChatWithDeviceIdRequested, OnStartChatWithDeviceIdRequested);
 	}
 
 	void UnsubscribeFromEvents(){
 		nvpEventManager.INSTANCE.UnsubscribeFromEvent(GameEvents.OnGameInitialized, OnGameInitialized);
 		nvpEventManager.INSTANCE.UnsubscribeFromEvent(GameEvents.OnOpenSettingsMenuRequested, OnOpenSettingsMenuRequested);
+		nvpEventManager.INSTANCE.UnsubscribeFromEvent(GameEvents.OnSaveSettingRequested, OnSaveSettingRequested);
+		nvpEventManager.INSTANCE.UnsubscribeFromEvent(GameEvents.OnStartChatWithDeviceIdRequested, OnStartChatWithDeviceIdRequested);
 	}
 }

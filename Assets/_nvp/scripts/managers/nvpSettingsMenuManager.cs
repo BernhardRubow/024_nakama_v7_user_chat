@@ -11,7 +11,8 @@ public class nvpSettingsMenuManager : MonoBehaviour {
 
 	// +++ unity callbacks ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	void Start () {
-		
+		_host.text = nvpGameManager.HOST;
+		_port.text = nvpGameManager.PORT.ToString();
 	}
 
 	void Update () {
@@ -19,13 +20,13 @@ public class nvpSettingsMenuManager : MonoBehaviour {
 	}
 
 	// +++ class methods ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	public void OnSave(){
-		Debug.Log("OnConnectWithSettingClicked called");
-		string[] parameter = new string[2];
-		parameter[0] = _host.text;
-		parameter[1] = _port.text;
+	public void OnSaveClicked(){
+		Debug.Log("OnSaveClicked called");
+		string[] userSettings = new string[2];
+		userSettings[0] = _host.text;
+		userSettings[1] = _port.text;
 
-		nvpEventManager.INSTANCE.InvokeEvent(GameEvents.OnSaveSettingRequested, this, parameter);
+		nvpEventManager.INSTANCE.InvokeEvent(GameEvents.OnSaveSettingRequested, this, userSettings);
 	}
 
 

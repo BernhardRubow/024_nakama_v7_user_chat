@@ -10,7 +10,8 @@ namespace newvisionsproject.managers.events
 
         OnGameInitialized,
         OnOpenSettingsMenuRequested,
-        OnSaveSettingRequested
+        OnSaveSettingRequested,
+        OnStartChatWithDeviceIdRequested
     }
 
     public class nvpEventManager : MonoBehaviour
