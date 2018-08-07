@@ -13,81 +13,67 @@ public class nvpChatWithDeviceIdManager : MonoBehaviour
     // +++ fields +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     [SerializeField] private InputField _roomName;
     [SerializeField] private InputField _message;
+    [SerializeField] private Text _sessionText;
+    [SerializeField] private Text _statusText;
+    [SerializeField] private Text _chatUsers;
+    [SerializeField] private Text _chatText;
 
-    private IClient _client = new Client("defaultkey", "127.0.0.1", 7350, false);
-    private ISocket _socket;
-    private IChannel _channel;
-    private List<IUserPresence> _connectedUsers;
-    private ISession _session;
-    private string _id;
+    private List<System.Action> _deferedActions;
+    private nvpChatNetworkManager _chatScript;
 
 
-    // Use this for initialization
+
+
+    // +++ unity callbacks ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     private async void Start()
     {
-        _connectedUsers = new List<IUserPresence>(0);
+        _deferedActions = new List<System.Action>();
 
-        _client = new Client("defaultkey", nvpGameManager.HOST, nvpGameManager.PORT, false);
 
-        _id = System.Guid.NewGuid().ToString();
-        _session = await _client.AuthenticateDeviceAsync(_id);
-        Debug.LogFormat("Session '{0}'", _session);
-
-        _socket = _client.CreateWebSocket();
-
-        _connectedUsers = new List<IUserPresence>(0);
-        _socket.OnChannelPresence += (sender, presenceChange) =>
-        {
-            _connectedUsers.AddRange(presenceChange.Joins);
-            foreach (var leave in presenceChange.Leaves)
-            {
-                _connectedUsers.RemoveAll(item => item.SessionId.Equals(leave.SessionId));
-            };
-
-            // Print connected presences.
-            var presences = string.Join(", ", _connectedUsers);
-            Debug.LogFormat("Presence List\n {0}", presences);
+        _chatScript = this.GetComponent<nvpChatNetworkManager>();
+        _chatScript.OnStatusChanged += (s, e) => {
+            _deferedActions.Add(() => _statusText.text = e.ToString() + "\n" + _statusText.text);            
         };
-        _socket.OnChannelMessage += (sender, message) =>
-        {
-            Debug.LogFormat("Received Message '{0}'", message);
+        _chatScript.OnMessageReceived += (s, e) => {
+            _deferedActions.Add(() => _chatText.text = e.ToString() + "\n" + _chatText.text);
         };
-        _socket.OnConnect += (sender, evt) => Debug.Log("Socket connected.");
-        _socket.OnDisconnect += (sender, evt) => Debug.Log("Socket disconnected.");
-
-        await _socket.ConnectAsync(_session);
-		
-        Debug.Log("Nakama Init complete");
     }
 
-
-    // +++ event handler ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    public async void OnJoinRoom()
+    void Update()
     {
-		Debug.Log("OnJoinRoom called");
-        var roomName = _roomName.text;
-		
-        _channel = await _socket.JoinChatAsync(roomName, ChannelType.Room);
-        _connectedUsers.AddRange(_channel.Presences);
-
-
+        if(_deferedActions.Count > 0){
+            foreach(var action in _deferedActions) action();
+            _deferedActions.Clear();
+        }
     }
 
 
-    public async void OnSend()
+
+
+    // +++ ui event handler +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    public void OnJoinRoom()
     {
-		Debug.Log("OnSend called");
-        string message = _message.text;
-        var content = new Dictionary<string, string> { { "hello", string.Format("{0}: {1}", _id, message) } }.ToJson();
-        await _socket.WriteChatMessageAsync(_channel, content);
+        _chatScript.JoinRoom(_roomName.text);
     }
+
+
+    public void OnSend()
+    {
+        _chatScript.Send(_message.text);
+    }
+
+
+
+
+    // +++ unity event handler ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     private async void OnApplicationQuit()
     {
-        if (_socket != null)
-        {
-            await _socket.DisconnectAsync(false);
-        }
+        
     }
+
+
+    // +++ class methods ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 
 }
