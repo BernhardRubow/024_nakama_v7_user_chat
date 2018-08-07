@@ -22,11 +22,15 @@ public class nvpMainMenuManager : MonoBehaviour {
 	}
 
 	// +++ class methods ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	public void ConnectToServer(){
-		nvpEventManager.INSTANCE.InvokeEvent(GameEvents.OnOpenSettingsMenuRequested, this, null);
+	public void OnOpenServerSettingsClicked(){
+		nvpEventManager.INSTANCE.InvokeEvent(GameEvents.OnOpenServerSettingsSceneRequested, this, null);
 	}
 
-	public void StartChatDeviceId(){
-		nvpEventManager.INSTANCE.InvokeEvent(GameEvents.OnStartChatWithDeviceIdRequested, this, null);
+	public void OnOpenChatWithUniqueId(){
+		nvpEventManager.INSTANCE.InvokeEvent(GameEvents.OnOpenChatWithUniqueIdSceneRequested, this, null);
+	}
+
+	public void OnOpenUserSettingsClicked(){
+		nvpEventManager.INSTANCE.InvokeEvent(GameEvents.OnOpenUserSettingsSceneRequested, this, null);
 	}
 }

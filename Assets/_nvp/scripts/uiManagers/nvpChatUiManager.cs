@@ -7,7 +7,7 @@ using UnityEngine.UI;
 using newvisionsproject.managers.events;
 
 
-public class nvpChatWithDeviceIdManager : MonoBehaviour
+public class nvpChatUiManager : MonoBehaviour
 {
 
     // +++ fields +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -21,24 +21,18 @@ public class nvpChatWithDeviceIdManager : MonoBehaviour
     private List<System.Action> _deferedActions;
     private nvpChatNetworkManager _chatScript;
 
-
+    private Dictionary<string, string> _userDisplayNames = new Dictionary<string, string>();
 
 
     // +++ unity callbacks ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    private async void Start()
+    void Start()
     {
         _deferedActions = new List<System.Action>();
 
-
         _chatScript = this.GetComponent<nvpChatNetworkManager>();
-        _chatScript.OnStatusChanged += (s, e) => {
-            _deferedActions.Add(() => _statusText.text = e.ToString() + "\n" + _statusText.text);            
-        };
-        _chatScript.OnMessageReceived += (s, e) => {
-            var msg = (IApiChannelMessage)e;
-            ChatMessage chatMessage = msg.Content.FromJson<ChatMessage>();
-            _deferedActions.Add(() => _chatText.text = string.Format("{0} says: {1}\n{2}", chatMessage.UserName, chatMessage.Message, _chatText.text));
-        };
+        _chatScript.OnStatusChanged += OnStatusChanged;
+        _chatScript.OnMessageReceived += OnMessageReceived;
+        _chatScript.OnChannelPresencesChanged += OnChannelPresencesChanged;
     }
 
     void Update()
@@ -49,7 +43,29 @@ public class nvpChatWithDeviceIdManager : MonoBehaviour
         }
     }
 
+    // +++ event handler ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    void OnStatusChanged(object s, object e)
+    {
+            _deferedActions.Add(() => _statusText.text = e.ToString() + "\n" + _statusText.text);            
+    }
 
+    void OnMessageReceived(object s, object e)
+    {        
+            var msg = (IApiChannelMessage)e;
+            ChatMessage chatMessage = msg.Content.FromJson<ChatMessage>();
+            _deferedActions.Add(() => _chatText.text = string.Format("{0} says: {1}\n{2}", chatMessage.UserName, chatMessage.Message, _chatText.text));
+    }
+
+    void OnChannelPresencesChanged(object s, object e){
+        var connectedUsers = (List<IApiUser>)e;
+        var userList = "";
+        
+        foreach(var user in connectedUsers){
+            userList += user.DisplayName + "\n";
+        }
+
+        _deferedActions.Add(() => _chatUsers.text = userList);
+    }
 
 
     // +++ ui event handler +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -63,19 +79,4 @@ public class nvpChatWithDeviceIdManager : MonoBehaviour
     {
         _chatScript.Send(_message.text);
     }
-
-
-
-
-    // +++ unity event handler ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-    private async void OnApplicationQuit()
-    {
-        
-    }
-
-
-    // +++ class methods ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
 }

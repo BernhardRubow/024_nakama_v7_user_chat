@@ -7,6 +7,8 @@ public class nvpGameManager : MonoBehaviour {
 	// +++ Fields +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	public static string HOST;
 	public static int PORT;
+
+	public static string UNIQUEID;
 	
 
 	// +++ unity callbacks ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -38,6 +40,7 @@ public class nvpGameManager : MonoBehaviour {
 
 		nvpGameManager.HOST = "192.168.160.151";
 		nvpGameManager.PORT = 7350;
+		nvpGameManager.UNIQUEID = System.Guid.NewGuid().ToString();
 
 		// at end of initialization throw event
 		nvpEventManager.INSTANCE.InvokeEvent(GameEvents.OnGameInitialized,this, null);

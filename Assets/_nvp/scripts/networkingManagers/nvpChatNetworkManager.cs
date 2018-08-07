@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Nakama;
 using Nakama.TinyJson;
+using System.Linq;
+
 
 public class nvpChatNetworkManager : MonoBehaviour {
 
@@ -11,7 +13,7 @@ public class nvpChatNetworkManager : MonoBehaviour {
 
 
 	// +++ fields +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	private IClient _client = new Client("defaultkey", "127.0.0.1", 7350, false);
+	private IClient _client;
     private ISocket _socket;
     private IChannel _channel;
     private List<IUserPresence> _connectedUsers;
@@ -20,6 +22,7 @@ public class nvpChatNetworkManager : MonoBehaviour {
 
 	public event ChatEventDelegate OnStatusChanged = delegate {};
 	public event ChatEventDelegate OnMessageReceived = delegate {};
+    public event ChatEventDelegate OnChannelPresencesChanged = delegate {};
 
 
 
@@ -37,8 +40,7 @@ public class nvpChatNetworkManager : MonoBehaviour {
 
         // request a authenticated session from the server and 
         // authenticate the user with the random device id
-        _session = await _client.AuthenticateDeviceAsync(_id);
-        
+        _session = await _client.AuthenticateDeviceAsync(nvpGameManager.UNIQUEID);        
 
         // Creat communcation socket
         _socket = _client.CreateWebSocket();
@@ -53,16 +55,11 @@ public class nvpChatNetworkManager : MonoBehaviour {
         await _socket.ConnectAsync(_session);
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
 
 
 
     // +++ handler for nakama events ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    void OnChannelPresence(object sender, IChannelPresenceEvent presenceChange)
+    async void OnChannelPresence(object sender, IChannelPresenceEvent presenceChange)
     {
         _connectedUsers.AddRange(presenceChange.Joins);
         foreach (var leave in presenceChange.Leaves)
@@ -71,8 +68,12 @@ public class nvpChatNetworkManager : MonoBehaviour {
         };
 
         // Print connected presences.
-        var presences = string.Join(", ", _connectedUsers);
-        Debug.LogFormat("Presence List\n {0}", presences);
+        var presences = _connectedUsers.Select(x => x.Username).ToArray();
+        Debug.Log(presences);
+
+        IApiUsers result = await _client.GetUsersAsync(_session, null, presences, null);        
+        
+        this.OnChannelPresencesChanged(this, result.Users.ToList());
     }
 
     void OnChannelMessage(object sender, IApiChannelMessage message)

@@ -15,6 +15,9 @@ EditorBuildSettings:
     path: Assets/_nvp/scenes/menu/menuSettings.unity
     guid: b3b1f21a843a59d4b8a6c93d79bb4407
   - enabled: 1
+    path: Assets/_nvp/scenes/menu/menuUserSettings.unity
+    guid: d8d26ee14a4d1154280f4d2b6e79e131
+  - enabled: 1
     path: Assets/_nvp/scenes/chat/ChatWithDeviceId.unity
     guid: a7543efa2fc08a9409f246fb7fff925d
   m_configObjects: {}

@@ -26,23 +26,33 @@ public class nvpSceneManager : MonoBehaviour {
 		this.UnsubscribeFromEvents();
 	}
 
-	void OnStartChatWithDeviceIdRequested(object s, object e){
-		SceneManager.UnloadSceneAsync("menuMain");
-		SceneManager.LoadScene("ChatWithDeviceId", LoadSceneMode.Additive);
-	}
-
-	void OnSaveSettingRequested(object s, object e){
+	void OnServerSettingsSaved(object s, object e){
 		SceneManager.UnloadSceneAsync("menuSettings");
 		SceneManager.LoadScene("menuMain", LoadSceneMode.Additive);
 	}
 
-	void OnOpenSettingsMenuRequested(object s, object e){
-		SceneManager.UnloadSceneAsync("menuMain");
-		SceneManager.LoadScene("menuSettings", LoadSceneMode.Additive);
+	void OnUserSettingsSaved(object s, object e){
+		SceneManager.UnloadSceneAsync("menuUserSettings");
+		SceneManager.LoadScene("menuMain", LoadSceneMode.Additive);
 	}
 
 	void OnConnectToServerRequested(object s, object e){
 		SceneManager.UnloadSceneAsync("menuSettings");	
+	}
+
+	void OpenServerSettingsScene(object s, object e){
+		SceneManager.UnloadSceneAsync("menuMain");
+		SceneManager.LoadScene("menuSettings", LoadSceneMode.Additive);
+	}
+
+	void OpenChatWithUniqueIdScenen(object s, object e){
+		SceneManager.UnloadSceneAsync("menuMain");
+		SceneManager.LoadScene("ChatWithDeviceId", LoadSceneMode.Additive);
+	}
+
+	void OpenUserSettingScene(object s, object e){
+		SceneManager.UnloadSceneAsync("menuMain");
+		SceneManager.LoadScene("menuUserSettings", LoadSceneMode.Additive);
 	}
 
 
@@ -54,16 +64,26 @@ public class nvpSceneManager : MonoBehaviour {
 	}
 
 	void SubscribeToEvents(){
+		// other events
 		nvpEventManager.INSTANCE.SubscribeToEvent(GameEvents.OnGameInitialized, OnGameInitialized);
-		nvpEventManager.INSTANCE.SubscribeToEvent(GameEvents.OnOpenSettingsMenuRequested, OnOpenSettingsMenuRequested);
-		nvpEventManager.INSTANCE.SubscribeToEvent(GameEvents.OnSaveSettingRequested, OnSaveSettingRequested);
-		nvpEventManager.INSTANCE.SubscribeToEvent(GameEvents.OnStartChatWithDeviceIdRequested, OnStartChatWithDeviceIdRequested);
+		nvpEventManager.INSTANCE.SubscribeToEvent(GameEvents.OnSaveSettingRequested, OnServerSettingsSaved);
+		nvpEventManager.INSTANCE.SubscribeToEvent(GameEvents.OnUserSettingsSaved, OnUserSettingsSaved);
+
+		// open scene request events
+		nvpEventManager.INSTANCE.SubscribeToEvent(GameEvents.OnOpenServerSettingsSceneRequested, OpenServerSettingsScene);
+		nvpEventManager.INSTANCE.SubscribeToEvent(GameEvents.OnOpenChatWithUniqueIdSceneRequested, OpenChatWithUniqueIdScenen);
+		nvpEventManager.INSTANCE.SubscribeToEvent(GameEvents.OnOpenUserSettingsSceneRequested, OpenUserSettingScene);
 	}
 
 	void UnsubscribeFromEvents(){
+		// other events
 		nvpEventManager.INSTANCE.UnsubscribeFromEvent(GameEvents.OnGameInitialized, OnGameInitialized);
-		nvpEventManager.INSTANCE.UnsubscribeFromEvent(GameEvents.OnOpenSettingsMenuRequested, OnOpenSettingsMenuRequested);
-		nvpEventManager.INSTANCE.UnsubscribeFromEvent(GameEvents.OnSaveSettingRequested, OnSaveSettingRequested);
-		nvpEventManager.INSTANCE.UnsubscribeFromEvent(GameEvents.OnStartChatWithDeviceIdRequested, OnStartChatWithDeviceIdRequested);
+		nvpEventManager.INSTANCE.UnsubscribeFromEvent(GameEvents.OnSaveSettingRequested, OnServerSettingsSaved);
+		nvpEventManager.INSTANCE.UnsubscribeFromEvent(GameEvents.OnUserSettingsSaved, OnUserSettingsSaved);
+
+		// open scene request events
+		nvpEventManager.INSTANCE.UnsubscribeFromEvent(GameEvents.OnOpenServerSettingsSceneRequested, OpenServerSettingsScene);
+		nvpEventManager.INSTANCE.UnsubscribeFromEvent(GameEvents.OnOpenChatWithUniqueIdSceneRequested, OpenChatWithUniqueIdScenen);
+		nvpEventManager.INSTANCE.UnsubscribeFromEvent(GameEvents.OnOpenUserSettingsSceneRequested, OpenUserSettingScene);
 	}
 }
