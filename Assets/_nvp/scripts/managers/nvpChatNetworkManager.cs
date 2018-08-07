@@ -79,8 +79,7 @@ public class nvpChatNetworkManager : MonoBehaviour {
     {
 		Debug.Log ("Message received");
 		this.OnStatusChanged(this, string.Format("Message receive {0:dd.MM.yy hh:mm:ss}", System.DateTime.Now));
-		var content = message.Content;
-		this.OnMessageReceived(this, message.ToString());
+		this.OnMessageReceived(this, message);
     }
 
     void OnConnect(object sender, System.EventArgs evt)
@@ -115,7 +114,20 @@ public class nvpChatNetworkManager : MonoBehaviour {
     {
         this.OnStatusChanged(this, "OnSend called");
         string message = msg;
-        var content = new Dictionary<string, string> {{_session.UserId, message}}.ToJson();
-        await _socket.WriteChatMessageAsync(_channel, content);
+        var content = new ChatMessage(_session.Username, _session.UserId, msg); 
+        await _socket.WriteChatMessageAsync(_channel, content.ToJson());
+    }
+}
+
+public class ChatMessage{
+    public string UserName;
+    public string UserId;
+    public string Message;
+
+    public ChatMessage(string userName, string userId, string message)
+    {
+        UserName = userName;
+        UserId = userId;
+        Message = message;
     }
 }

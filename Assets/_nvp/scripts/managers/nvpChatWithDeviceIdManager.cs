@@ -35,7 +35,9 @@ public class nvpChatWithDeviceIdManager : MonoBehaviour
             _deferedActions.Add(() => _statusText.text = e.ToString() + "\n" + _statusText.text);            
         };
         _chatScript.OnMessageReceived += (s, e) => {
-            _deferedActions.Add(() => _chatText.text = e.ToString() + "\n" + _chatText.text);
+            var msg = (IApiChannelMessage)e;
+            ChatMessage chatMessage = msg.Content.FromJson<ChatMessage>();
+            _deferedActions.Add(() => _chatText.text = string.Format("{0} says: {1}\n{2}", chatMessage.UserName, chatMessage.Message, _chatText.text));
         };
     }
 
