@@ -1699,7 +1699,7 @@ GameObject:
   - component: {fileID: 1937336458}
   - component: {fileID: 1937336459}
   m_Layer: 5
-  m_Name: nvpManagers
+  m_Name: nvpSceneManagers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

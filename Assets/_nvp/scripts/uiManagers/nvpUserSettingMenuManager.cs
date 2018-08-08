@@ -9,6 +9,7 @@ public class nvpUserSettingMenuManager : MonoBehaviour {
 
 	// +++ fields +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	[SerializeField] private InputField _userName;
+	[SerializeField] private Text _lbUsername;
 
 	private nvpUserSettingNetworkManager _networkManager;
 
@@ -16,6 +17,14 @@ public class nvpUserSettingMenuManager : MonoBehaviour {
 	void Start () {
 		_networkManager = this.GetComponent<nvpUserSettingNetworkManager>();
 		_networkManager.OnAccountLoaded += OnAccountLoaded;
+
+		// Show authentication type in Usernamelabel
+		if(nvpGameManager.UNIQUEID != string.Empty){
+			_lbUsername.text = string.Format("Username by Id ({0})", nvpGameManager.UNIQUEID);
+		}
+		else {
+			_lbUsername.text = string.Format("Username by Email ({0})", nvpGameManager.EMAIL);
+		}
 	}
 
 	// +++ event handler ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

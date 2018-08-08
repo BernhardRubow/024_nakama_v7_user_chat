@@ -7,8 +7,9 @@ public class nvpGameManager : MonoBehaviour {
 	// +++ Fields +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	public static string HOST;
 	public static int PORT;
-
 	public static string UNIQUEID;
+	public static string EMAIL;
+	public static string PASSWORD;
 	
 
 	// +++ unity callbacks ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -34,6 +35,13 @@ public class nvpGameManager : MonoBehaviour {
 		string[] userSettings = (string[])e;
 		nvpGameManager.HOST = userSettings[0];
 		nvpGameManager.PORT = System.Convert.ToInt32(userSettings[1]);
+		nvpGameManager.UNIQUEID = userSettings[2];
+
+		if(userSettings[3] != string.Empty){
+			nvpGameManager.UNIQUEID = string.Empty;
+			nvpGameManager.EMAIL = userSettings[3];
+			nvpGameManager.PASSWORD = userSettings[4];
+		}
 	}
 	
 	void InitiaizeGame(){

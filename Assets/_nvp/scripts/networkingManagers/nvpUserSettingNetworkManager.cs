@@ -38,8 +38,16 @@ public class nvpUserSettingNetworkManager : MonoBehaviour {
         _id = System.Guid.NewGuid().ToString();
 
         // request a authenticated session from the server and 
-        // authenticate the user with the random device id
-        _session = await _client.AuthenticateDeviceAsync(nvpGameManager.UNIQUEID);        
+        // authenticate the user with either the random device id
+        // or email/password
+        if(nvpGameManager.UNIQUEID != string.Empty)
+        {
+            _session = await _client.AuthenticateDeviceAsync(nvpGameManager.UNIQUEID);        
+        }
+        else 
+        {
+            _session = await _client.AuthenticateEmailAsync(nvpGameManager.EMAIL, nvpGameManager.PASSWORD);
+        }
 
 		_account = await _client.GetAccountAsync(_session);
 
